@@ -1,11 +1,11 @@
-import { SignupFormDemo } from "@/Components/Signup";
+import Signup from "@/Components/Signup";
 
-export default function Signup() {
+export default function page() {
     return (
     // <div className=" dark h-full w-full ">
       
     //   <div className=" place-content-center"> 
-       <SignupFormDemo/>
+    <Signup/>
     // </div>
     // </div>
    
