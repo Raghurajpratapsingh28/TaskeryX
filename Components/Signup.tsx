@@ -1,26 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import axios from "axios";
+import { FormEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 const Signup = () => {
   const {
     register,
+    watch,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const onSubmit = (data: any) => {
+
+
+  const Signing = async (e: FormEvent) => {
+    e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      console.log("User Signed Up:", data);
-      setLoading(false);
-    }, 2000);
+    try {
+     const response= await axios.post("http://localhost:3000/api/user", 
+      { name, email, password }, 
+      // { headers: { "Content-Type": "application/json" } }
+    );
+    
+      console.log(response);
+  
+    } catch (error) {
+      console.log(error);
+    }
+   
+    
+   
+  
   };
+
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -33,13 +56,15 @@ const Signup = () => {
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">
           Create an Account
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form  className="space-y-4" onSubmit={Signing}>
+
+
           {/* Name */}
           <div>
             <label className="block text-gray-700 font-medium">Full Name</label>
             <input
-              type="text"
-              {...register("name", { required: "Name is required" })}
+              type="text"  placeholder="Enter your name" onChange={(e)=>{setName(e.target.value)}} 
+              // {...register("name", { required: "Name is required" })}
               className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             {errors.name && (
@@ -47,12 +72,15 @@ const Signup = () => {
             )}
           </div>
 
+
+
+
           {/* Email */}
           <div>
             <label className="block text-gray-700 font-medium">Email</label>
             <input
-              type="email"
-              {...register("email", { required: "Email is required" })}
+              type="email" placeholder="example@gmail.com" onChange={(e)=>{setEmail(e.target.value)}}
+              
               className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             {errors.email && (
@@ -60,15 +88,18 @@ const Signup = () => {
             )}
           </div>
 
+
+
+
           {/* Password */}
           <div>
             <label className="block text-gray-700 font-medium">Password</label>
             <input
-              type="password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: { value: 6, message: "Must be at least 6 characters" },
-              })}
+              type="password" placeholder="password"onChange={(e)=>{setPassword(e.target.value)}}
+              // {...register("password", {
+              //   required: "Password is required",
+              //   minLength: { value: 6, message: "Must be at least 6 characters" },
+              // })}
               className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
             {errors.password && (
@@ -78,9 +109,33 @@ const Signup = () => {
             )}
           </div>
 
+
+
+          {/* Confirm Password */}
+          {/* <div>
+            <label className="block text-gray-700 font-medium">Confirm Password</label>
+            <input
+              type="password"
+              {...register("confirmPassword", {
+                required: "Please confirm your password",
+                validate: (value) =>
+                  value === watch(password) || "Passwords do not match",
+              })}
+              className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                wrong inputs
+              </p>//{errors.confirmPassword.message}
+            )}
+          </div>
+ */}
+
+
+
           {/* Submit Button */}
           <button
-            type="submit"
+            type="submit" 
             className={`w-full p-2 text-white font-medium rounded-md transition ${
               loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
             }`}
