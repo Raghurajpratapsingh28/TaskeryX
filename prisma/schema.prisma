@@ -12,3 +12,26 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User{
+  id Int @id @default(autoincrement())
+  name String 
+  email String @unique
+  password String
+  role String
+
+}
+
+
+
+// model Project{
+//   id Int @id @default(autoincrement())
+//   name String
+//   owner User @relation(fields: [OwnerId()] references: [id()])
+
+// }
+
+
+// model Task{
+//   id Int @id @default(autoincrement())
+// }

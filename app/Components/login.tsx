@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import axios from "axios";
 
 const Login = () => {
   const {
@@ -13,13 +14,29 @@ const Login = () => {
   } = useForm();
 
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
-  const onSubmit = (data: any) => {
+  const login = async () => {
     setLoading(true);
-    setTimeout(() => {
-      console.log("User Logged In:", data);
-      setLoading(false);
-    }, 2000);
+    setErrorMessage(""); // Clear any previous error message
+
+    try {
+      const response = await axios.post("http://localhost:3000/api/user/login", {
+        email,
+        password,
+      });
+      console.log("Login successful:", response.data);
+      // Handle successful login (e.g., redirect to dashboard)
+    } catch (error:any) {
+      console.error("Login error:", error);
+      setErrorMessage(
+        error.response?.data?.message || "Invalid email or password."
+      );
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -33,18 +50,21 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">
           Login to Your Account
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {errorMessage && (
+          <p className="text-red-500 text-sm text-center mb-4">{errorMessage}</p>
+        )}
+
+        <form onSubmit={handleSubmit(login)} className="space-y-4">
           {/* Email */}
           <div>
             <label className="block text-gray-700 font-medium">Email</label>
             <input
               type="email"
-              {...register("email", { required: "Email is required" })}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">email error </p>//{errors.email.message}
-            )}
+            {errors.email && <p className="text-red-500 text-sm mt-1">Email is required</p>}
           </div>
 
           {/* Password */}
@@ -52,17 +72,10 @@ const Login = () => {
             <label className="block text-gray-700 font-medium">Password</label>
             <input
               type="password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: { value: 6, message: "Must be at least 6 characters" },
-              })}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">
-                password error
-              </p>//{errors.password.message}
-            )}
+            {errors.password && <p className="text-red-500 text-sm mt-1">Password is required</p>}
           </div>
 
           {/* Submit Button */}
