@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+
 
 const Login = () => {
   const {
@@ -18,16 +20,25 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
-  const login = async () => {
+
+  const router=useRouter();
+
+
+
+  const login = async (e:FormEvent) => {
+    e.preventDefault();
+    
     setLoading(true);
     setErrorMessage(""); // Clear any previous error message
 
     try {
+     
       const response = await axios.post("http://localhost:3000/api/user/login", {
         email,
         password,
       });
       console.log("Login successful:", response.data);
+      router.push("/");
       // Handle successful login (e.g., redirect to dashboard)
     } catch (error:any) {
       console.error("Login error:", error);
@@ -55,7 +66,7 @@ const Login = () => {
           <p className="text-red-500 text-sm text-center mb-4">{errorMessage}</p>
         )}
 
-        <form onSubmit={handleSubmit(login)} className="space-y-4">
+        <form onSubmit={login} className="space-y-4">
           {/* Email */}
           <div>
             <label className="block text-gray-700 font-medium">Email</label>
