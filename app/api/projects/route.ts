@@ -12,7 +12,6 @@ export async function GET(): Promise<NextResponse> {
         console.error("Error retrieving projects:", error);
         return NextResponse.json({ message: "Error retrieving projects" }, { status: 500 });
       } finally {
-        // Close the Prisma client connection when the request is finished
         await prisma.$disconnect();
 }}
 
